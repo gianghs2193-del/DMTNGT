@@ -1,0 +1,363 @@
+18:32:29 INFO    === VnExpress: bat dau tu trang 1 (toi da 400 trang) ===
+18:32:30 INFO    [VnExpress] trang 1: 30 link, 30 moi, 30 can tai
+18:33:37 INFO    [VnExpress] trang 2: 30 link, 30 moi, 30 can tai
+18:34:43 INFO    [VnExpress] trang 3: 30 link, 30 moi, 30 can tai
+18:35:45 INFO    [VnExpress] trang 4: 30 link, 30 moi, 30 can tai
+18:36:50 INFO    [VnExpress] trang 5: 30 link, 30 moi, 30 can tai
+18:37:50 INFO    [VnExpress] trang 6: 30 link, 30 moi, 30 can tai
+18:38:53 INFO    [VnExpress] trang 7: 30 link, 30 moi, 30 can tai
+18:39:58 INFO    [VnExpress] trang 8: 30 link, 30 moi, 30 can tai
+18:41:02 INFO    [VnExpress] trang 9: 30 link, 30 moi, 30 can tai
+18:42:07 INFO    [VnExpress] trang 10: 30 link, 30 moi, 30 can tai
+18:43:10 INFO    [VnExpress] trang 11: 30 link, 30 moi, 30 can tai
+18:44:14 INFO    [VnExpress] trang 12: 30 link, 30 moi, 30 can tai
+18:45:16 INFO    [VnExpress] trang 13: 30 link, 30 moi, 30 can tai
+18:46:16 INFO    [VnExpress] trang 14: 30 link, 30 moi, 30 can tai
+18:47:22 INFO    [VnExpress] trang 15: 30 link, 30 moi, 30 can tai
+18:48:24 INFO    [VnExpress] trang 16: 30 link, 30 moi, 30 can tai
+18:49:27 INFO    [VnExpress] trang 17: 30 link, 30 moi, 30 can tai
+18:50:30 INFO    [VnExpress] trang 18: 30 link, 30 moi, 30 can tai
+18:51:35 INFO    [VnExpress] trang 19: 30 link, 30 moi, 30 can tai
+18:52:36 INFO    [VnExpress] trang 20: 30 link, 30 moi, 30 can tai
+18:52:58 INFO    Ket thuc sau 20.5 phut, tai 581 bai moi. 
+18:57:33 INFO    === VnExpress: bat dau tu trang 20 (toi da 400 trang) ===
+18:57:33 INFO    [VnExpress] trang 20: 30 link, 0 moi, 19 can tai
+18:58:12 INFO    === VnExpress: dung nguon - trang 21 khong co link bai viet (het phan trang / doi giao dien?) ===
+18:58:12 INFO    === Dan Tri: bat dau tu trang 1 (toi da 400 trang) ===
+18:58:13 INFO    [Dan Tri] trang 1: 26 link, 26 moi, 26 can tai
+18:59:09 INFO    [Dan Tri] trang 2: 21 link, 15 moi, 15 can tai
+18:59:48 INFO    [Dan Tri] trang 3: 21 link, 20 moi, 20 can tai
+19:00:25 INFO    [Dan Tri] trang 4: 21 link, 20 moi, 20 can tai
+19:01:02 INFO    [Dan Tri] trang 5: 21 link, 20 moi, 20 can tai
+19:01:43 INFO    [Dan Tri] trang 6: 21 link, 20 moi, 20 can tai
+19:02:24 INFO    [Dan Tri] trang 7: 21 link, 20 moi, 20 can tai
+19:03:03 INFO    [Dan Tri] trang 8: 21 link, 20 moi, 20 can tai
+19:03:43 INFO    [Dan Tri] trang 9: 21 link, 20 moi, 20 can tai
+19:04:26 INFO    [Dan Tri] trang 10: 21 link, 20 moi, 20 can tai
+19:05:05 INFO    [Dan Tri] trang 11: 21 link, 20 moi, 20 can tai
+19:05:46 INFO    [Dan Tri] trang 12: 21 link, 19 moi, 19 can tai
+19:06:25 INFO    [Dan Tri] trang 13: 21 link, 20 moi, 20 can tai
+19:07:08 INFO    [Dan Tri] trang 14: 21 link, 20 moi, 20 can tai
+19:07:51 INFO    [Dan Tri] trang 15: 21 link, 20 moi, 20 can tai
+19:08:37 INFO    [Dan Tri] trang 16: 21 link, 20 moi, 20 can tai
+19:09:19 INFO    [Dan Tri] trang 17: 21 link, 20 moi, 20 can tai
+19:10:03 INFO    [Dan Tri] trang 18: 21 link, 20 moi, 20 can tai
+19:10:45 INFO    [Dan Tri] trang 19: 21 link, 20 moi, 20 can tai
+19:11:45 INFO    [Dan Tri] trang 20: 21 link, 20 moi, 20 can tai
+19:12:24 INFO    [Dan Tri] trang 21: 21 link, 20 moi, 20 can tai
+19:13:06 INFO    [Dan Tri] trang 22: 21 link, 20 moi, 20 can tai
+19:13:48 INFO    [Dan Tri] trang 23: 21 link, 20 moi, 20 can tai
+19:14:34 INFO    [Dan Tri] trang 24: 21 link, 20 moi, 20 can tai
+19:15:20 INFO    [Dan Tri] trang 25: 21 link, 20 moi, 20 can tai
+19:16:05 INFO    [Dan Tri] trang 26: 21 link, 20 moi, 20 can tai
+19:16:48 WARNING [Dan Tri] trang 27 loi: HTTP 428
+19:16:53 WARNING [Dan Tri] trang 28 loi: HTTP 428
+19:16:55 INFO    [Dan Tri] trang 29: 21 link, 20 moi, 20 can tai
+19:17:39 INFO    [Dan Tri] trang 30: 21 link, 20 moi, 20 can tai
+19:18:23 INFO    === Dan Tri: dung nguon - trang 31 tra ve 404 (het phan trang) ===
+19:18:23 INFO    === VietNamNet: bat dau tu trang 1 (toi da 400 trang) ===
+19:18:25 INFO    [VietNamNet] trang 1: 31 link, 31 moi, 31 can tai
+19:19:31 INFO    [VietNamNet] trang 2: 25 link, 25 moi, 25 can tai
+19:20:23 INFO    [VietNamNet] trang 3: 25 link, 25 moi, 25 can tai
+19:21:15 INFO    [VietNamNet] trang 4: 25 link, 25 moi, 25 can tai
+19:22:01 INFO    [VietNamNet] trang 5: 25 link, 25 moi, 25 can tai
+19:22:53 INFO    [VietNamNet] trang 6: 25 link, 25 moi, 25 can tai
+19:23:43 INFO    [VietNamNet] trang 7: 25 link, 25 moi, 25 can tai
+19:24:32 INFO    [VietNamNet] trang 8: 25 link, 25 moi, 25 can tai
+19:25:22 INFO    [VietNamNet] trang 9: 25 link, 25 moi, 25 can tai
+19:26:14 INFO    [VietNamNet] trang 10: 25 link, 25 moi, 25 can tai
+19:27:05 INFO    [VietNamNet] trang 11: 25 link, 25 moi, 25 can tai
+19:27:57 INFO    [VietNamNet] trang 12: 25 link, 23 moi, 23 can tai
+19:28:43 INFO    [VietNamNet] trang 13: 25 link, 25 moi, 25 can tai
+19:29:52 INFO    [VietNamNet] trang 14: 25 link, 25 moi, 25 can tai
+19:30:45 INFO    [VietNamNet] trang 15: 25 link, 25 moi, 25 can tai
+19:31:38 INFO    [VietNamNet] trang 16: 25 link, 13 moi, 13 can tai
+19:32:09 INFO    [VietNamNet] trang 17: 25 link, 25 moi, 25 can tai
+19:33:02 INFO    [VietNamNet] trang 18: 25 link, 25 moi, 25 can tai
+19:33:57 INFO    [VietNamNet] trang 19: 25 link, 10 moi, 10 can tai
+19:34:17 INFO    [VietNamNet] trang 20: 25 link, 25 moi, 25 can tai
+19:35:04 INFO    [VietNamNet] trang 21: 25 link, 18 moi, 18 can tai
+19:35:42 INFO    [VietNamNet] trang 22: 25 link, 25 moi, 25 can tai
+19:36:35 INFO    [VietNamNet] trang 23: 25 link, 25 moi, 25 can tai
+19:37:28 INFO    [VietNamNet] trang 24: 25 link, 14 moi, 14 can tai
+19:37:59 INFO    [VietNamNet] trang 25: 25 link, 24 moi, 24 can tai
+19:38:54 INFO    [VietNamNet] trang 26: 25 link, 25 moi, 25 can tai
+19:39:43 INFO    [VietNamNet] trang 27: 25 link, 25 moi, 25 can tai
+19:40:34 INFO    [VietNamNet] trang 28: 25 link, 25 moi, 25 can tai
+19:41:27 INFO    [VietNamNet] trang 29: 25 link, 20 moi, 20 can tai
+19:42:11 INFO    [VietNamNet] trang 30: 25 link, 25 moi, 25 can tai
+19:43:05 INFO    [VietNamNet] trang 31: 25 link, 24 moi, 24 can tai
+19:43:55 INFO    [VietNamNet] trang 32: 25 link, 21 moi, 21 can tai
+19:44:39 INFO    [VietNamNet] trang 33: 25 link, 19 moi, 19 can tai
+19:45:21 INFO    [VietNamNet] trang 34: 25 link, 25 moi, 25 can tai
+19:46:16 INFO    [VietNamNet] trang 35: 25 link, 14 moi, 14 can tai
+19:46:47 INFO    [VietNamNet] trang 36: 25 link, 25 moi, 25 can tai
+19:47:38 INFO    [VietNamNet] trang 37: 25 link, 25 moi, 25 can tai
+19:48:31 INFO    [VietNamNet] trang 38: 25 link, 25 moi, 25 can tai
+19:49:20 INFO    [VietNamNet] trang 39: 25 link, 25 moi, 25 can tai
+19:50:16 INFO    [VietNamNet] trang 40: 25 link, 25 moi, 25 can tai
+19:51:10 INFO    [VietNamNet] trang 41: 25 link, 25 moi, 25 can tai
+19:52:00 INFO    [VietNamNet] trang 42: 25 link, 20 moi, 20 can tai
+19:52:41 INFO    [VietNamNet] trang 43: 25 link, 25 moi, 25 can tai
+19:53:32 INFO    [VietNamNet] trang 44: 25 link, 25 moi, 25 can tai
+19:54:23 INFO    [VietNamNet] trang 45: 25 link, 18 moi, 18 can tai
+19:55:06 INFO    [VietNamNet] trang 46: 25 link, 20 moi, 20 can tai
+19:55:58 INFO    [VietNamNet] trang 47: 25 link, 25 moi, 25 can tai
+19:56:52 INFO    [VietNamNet] trang 48: 25 link, 23 moi, 23 can tai
+19:57:43 INFO    [VietNamNet] trang 49: 25 link, 22 moi, 22 can tai
+19:58:31 INFO    [VietNamNet] trang 50: 25 link, 18 moi, 18 can tai
+19:59:08 INFO    [VietNamNet] trang 51: 25 link, 25 moi, 25 can tai
+20:00:03 INFO    [VietNamNet] trang 52: 25 link, 13 moi, 13 can tai
+20:00:32 INFO    [VietNamNet] trang 53: 25 link, 25 moi, 25 can tai
+20:01:24 INFO    [VietNamNet] trang 54: 25 link, 25 moi, 25 can tai
+20:02:19 INFO    [VietNamNet] trang 55: 25 link, 25 moi, 25 can tai
+20:03:14 INFO    [VietNamNet] trang 56: 25 link, 25 moi, 25 can tai
+20:04:05 INFO    [VietNamNet] trang 57: 25 link, 17 moi, 17 can tai
+20:04:42 INFO    [VietNamNet] trang 58: 25 link, 25 moi, 25 can tai
+20:05:37 INFO    [VietNamNet] trang 59: 25 link, 25 moi, 25 can tai
+20:06:29 INFO    [VietNamNet] trang 60: 25 link, 25 moi, 25 can tai
+20:07:24 INFO    [VietNamNet] trang 61: 25 link, 25 moi, 25 can tai
+20:08:17 INFO    [VietNamNet] trang 62: 25 link, 17 moi, 17 can tai
+20:08:53 INFO    [VietNamNet] trang 63: 25 link, 25 moi, 25 can tai
+20:09:46 INFO    [VietNamNet] trang 64: 25 link, 19 moi, 19 can tai
+20:10:28 INFO    [VietNamNet] trang 65: 25 link, 25 moi, 25 can tai
+20:11:19 INFO    [VietNamNet] trang 66: 25 link, 25 moi, 25 can tai
+20:12:12 INFO    [VietNamNet] trang 67: 25 link, 25 moi, 25 can tai
+20:13:04 INFO    [VietNamNet] trang 68: 25 link, 25 moi, 25 can tai
+20:13:57 INFO    [VietNamNet] trang 69: 25 link, 24 moi, 24 can tai
+20:14:47 INFO    [VietNamNet] trang 70: 25 link, 25 moi, 25 can tai
+20:15:39 INFO    [VietNamNet] trang 71: 25 link, 25 moi, 25 can tai
+20:16:29 INFO    [VietNamNet] trang 72: 25 link, 18 moi, 18 can tai
+20:17:11 INFO    [VietNamNet] trang 73: 25 link, 25 moi, 25 can tai
+20:18:07 INFO    [VietNamNet] trang 74: 25 link, 25 moi, 25 can tai
+20:19:01 INFO    [VietNamNet] trang 75: 25 link, 25 moi, 25 can tai
+20:19:53 INFO    [VietNamNet] trang 76: 25 link, 25 moi, 25 can tai
+20:20:45 INFO    [VietNamNet] trang 77: 25 link, 25 moi, 25 can tai
+20:21:34 INFO    [VietNamNet] trang 78: 25 link, 21 moi, 21 can tai
+20:22:19 INFO    [VietNamNet] trang 79: 25 link, 25 moi, 25 can tai
+20:23:13 INFO    [VietNamNet] trang 80: 25 link, 20 moi, 20 can tai
+20:23:53 INFO    [VietNamNet] trang 81: 25 link, 21 moi, 21 can tai
+20:24:35 INFO    [VietNamNet] trang 82: 25 link, 24 moi, 24 can tai
+20:25:25 INFO    [VietNamNet] trang 83: 25 link, 25 moi, 25 can tai
+20:26:18 INFO    [VietNamNet] trang 84: 25 link, 22 moi, 22 can tai
+20:26:58 INFO    [VietNamNet] trang 85: 25 link, 25 moi, 25 can tai
+20:27:52 INFO    [VietNamNet] trang 86: 25 link, 20 moi, 20 can tai
+20:28:37 INFO    [VietNamNet] trang 87: 25 link, 25 moi, 25 can tai
+20:29:31 INFO    [VietNamNet] trang 88: 25 link, 24 moi, 24 can tai
+20:30:18 INFO    [VietNamNet] trang 89: 25 link, 25 moi, 25 can tai
+20:31:11 INFO    [VietNamNet] trang 90: 25 link, 25 moi, 25 can tai
+20:32:01 INFO    [VietNamNet] trang 91: 25 link, 25 moi, 25 can tai
+20:32:50 INFO    [VietNamNet] trang 92: 25 link, 9 moi, 9 can tai
+20:33:09 INFO    [VietNamNet] trang 93: 25 link, 25 moi, 25 can tai
+20:34:04 INFO    [VietNamNet] trang 94: 25 link, 25 moi, 25 can tai
+20:35:01 INFO    [VietNamNet] trang 95: 25 link, 19 moi, 19 can tai
+20:35:46 INFO    [VietNamNet] trang 96: 25 link, 25 moi, 25 can tai
+20:36:38 INFO    [VietNamNet] trang 97: 25 link, 19 moi, 19 can tai
+20:37:15 INFO    [VietNamNet] trang 98: 25 link, 10 moi, 10 can tai
+20:37:38 INFO    [VietNamNet] trang 99: 25 link, 25 moi, 25 can tai
+20:38:30 INFO    [VietNamNet] trang 100: 25 link, 25 moi, 25 can tai
+20:39:26 INFO    [VietNamNet] trang 101: 25 link, 25 moi, 25 can tai
+20:40:27 INFO    [VietNamNet] trang 102: 25 link, 25 moi, 25 can tai
+20:41:42 INFO    [VietNamNet] trang 103: 25 link, 8 moi, 8 can tai
+20:42:02 INFO    [VietNamNet] trang 104: 25 link, 25 moi, 25 can tai
+20:43:05 INFO    [VietNamNet] trang 105: 25 link, 23 moi, 23 can tai
+20:44:01 INFO    [VietNamNet] trang 106: 25 link, 25 moi, 25 can tai
+20:44:55 INFO    [VietNamNet] trang 107: 25 link, 24 moi, 24 can tai
+20:45:45 INFO    [VietNamNet] trang 108: 25 link, 25 moi, 25 can tai
+20:46:41 INFO    [VietNamNet] trang 109: 25 link, 14 moi, 14 can tai
+20:47:14 INFO    [VietNamNet] trang 110: 25 link, 25 moi, 25 can tai
+20:48:26 INFO    [VietNamNet] trang 111: 25 link, 25 moi, 25 can tai
+20:49:44 INFO    [VietNamNet] trang 112: 25 link, 7 moi, 7 can tai
+20:50:15 INFO    [VietNamNet] trang 113: 25 link, 25 moi, 25 can tai
+20:51:27 INFO    [VietNamNet] trang 114: 25 link, 25 moi, 25 can tai
+20:52:43 INFO    [VietNamNet] trang 115: 25 link, 25 moi, 25 can tai
+20:53:38 INFO    [VietNamNet] trang 116: 25 link, 25 moi, 25 can tai
+20:54:45 INFO    [VietNamNet] trang 117: 25 link, 25 moi, 25 can tai
+20:55:58 INFO    [VietNamNet] trang 118: 25 link, 22 moi, 22 can tai
+20:57:03 INFO    [VietNamNet] trang 119: 25 link, 25 moi, 25 can tai
+20:58:12 INFO    [VietNamNet] trang 120: 25 link, 3 moi, 3 can tai
+20:58:17 INFO    [VietNamNet] trang 121: 25 link, 25 moi, 25 can tai
+20:59:27 INFO    [VietNamNet] trang 122: 25 link, 9 moi, 9 can tai
+20:59:49 INFO    [VietNamNet] trang 123: 25 link, 25 moi, 25 can tai
+21:01:00 INFO    [VietNamNet] trang 124: 25 link, 25 moi, 25 can tai
+21:02:05 INFO    [VietNamNet] trang 125: 25 link, 23 moi, 23 can tai
+21:03:08 INFO    [VietNamNet] trang 126: 25 link, 25 moi, 25 can tai
+21:03:59 INFO    [VietNamNet] trang 127: 25 link, 25 moi, 25 can tai
+21:04:49 INFO    [VietNamNet] trang 128: 25 link, 6 moi, 6 can tai
+21:05:03 INFO    [VietNamNet] trang 129: 25 link, 25 moi, 25 can tai
+21:05:56 INFO    [VietNamNet] trang 130: 25 link, 22 moi, 22 can tai
+21:06:46 INFO    [VietNamNet] trang 131: 25 link, 20 moi, 20 can tai
+21:07:35 INFO    [VietNamNet] trang 132: 25 link, 25 moi, 25 can tai
+21:08:38 INFO    [VietNamNet] trang 133: 25 link, 10 moi, 10 can tai
+21:09:10 INFO    [VietNamNet] trang 134: 25 link, 25 moi, 25 can tai
+21:10:16 INFO    [VietNamNet] trang 135: 25 link, 25 moi, 25 can tai
+21:11:38 INFO    [VietNamNet] trang 136: 25 link, 25 moi, 25 can tai
+21:12:51 INFO    [VietNamNet] trang 137: 25 link, 25 moi, 25 can tai
+21:13:53 INFO    [VietNamNet] trang 138: 25 link, 24 moi, 24 can tai
+21:15:08 INFO    [VietNamNet] trang 139: 25 link, 25 moi, 25 can tai
+21:16:14 INFO    [VietNamNet] trang 140: 25 link, 21 moi, 21 can tai
+21:17:06 INFO    [VietNamNet] trang 141: 25 link, 25 moi, 25 can tai
+21:18:13 INFO    [VietNamNet] trang 142: 25 link, 25 moi, 25 can tai
+21:19:38 INFO    [VietNamNet] trang 143: 25 link, 25 moi, 25 can tai
+21:20:49 INFO    [VietNamNet] trang 144: 25 link, 24 moi, 24 can tai
+21:21:37 INFO    [VietNamNet] trang 145: 25 link, 11 moi, 11 can tai
+21:22:03 INFO    [VietNamNet] trang 146: 25 link, 25 moi, 25 can tai
+21:22:54 INFO    [VietNamNet] trang 147: 25 link, 14 moi, 14 can tai
+21:23:23 INFO    [VietNamNet] trang 148: 25 link, 25 moi, 25 can tai
+21:24:17 INFO    [VietNamNet] trang 149: 25 link, 13 moi, 13 can tai
+21:24:47 INFO    [VietNamNet] trang 150: 25 link, 25 moi, 25 can tai
+21:25:37 INFO    [VietNamNet] trang 151: 25 link, 25 moi, 25 can tai
+21:26:29 INFO    [VietNamNet] trang 152: 25 link, 25 moi, 25 can tai
+21:27:23 INFO    [VietNamNet] trang 153: 25 link, 25 moi, 25 can tai
+21:28:16 INFO    [VietNamNet] trang 154: 25 link, 18 moi, 18 can tai
+21:28:57 INFO    [VietNamNet] trang 155: 25 link, 25 moi, 25 can tai
+21:29:49 INFO    [VietNamNet] trang 156: 25 link, 25 moi, 25 can tai
+21:30:39 INFO    [VietNamNet] trang 157: 25 link, 25 moi, 25 can tai
+21:31:28 INFO    [VietNamNet] trang 158: 25 link, 14 moi, 14 can tai
+21:31:56 INFO    [VietNamNet] trang 159: 25 link, 25 moi, 25 can tai
+21:32:46 INFO    [VietNamNet] trang 160: 25 link, 24 moi, 24 can tai
+21:33:36 INFO    [VietNamNet] trang 161: 25 link, 21 moi, 21 can tai
+21:34:18 INFO    [VietNamNet] trang 162: 25 link, 25 moi, 25 can tai
+21:35:06 INFO    [VietNamNet] trang 163: 25 link, 25 moi, 25 can tai
+21:36:00 INFO    [VietNamNet] trang 164: 25 link, 13 moi, 13 can tai
+21:36:30 INFO    [VietNamNet] trang 165: 25 link, 25 moi, 25 can tai
+21:37:49 INFO    [VietNamNet] trang 166: 25 link, 13 moi, 13 can tai
+21:38:30 INFO    [VietNamNet] trang 167: 25 link, 25 moi, 25 can tai
+21:39:45 INFO    [VietNamNet] trang 168: 25 link, 24 moi, 24 can tai
+21:40:50 INFO    [VietNamNet] trang 169: 25 link, 25 moi, 25 can tai
+21:42:01 INFO    [VietNamNet] trang 170: 25 link, 25 moi, 25 can tai
+21:43:20 INFO    [VietNamNet] trang 171: 25 link, 25 moi, 25 can tai
+21:44:33 INFO    [VietNamNet] trang 172: 25 link, 23 moi, 23 can tai
+21:45:39 INFO    [VietNamNet] trang 173: 25 link, 17 moi, 17 can tai
+21:46:27 INFO    [VietNamNet] trang 174: 25 link, 25 moi, 25 can tai
+21:47:39 INFO    [VietNamNet] trang 175: 25 link, 25 moi, 25 can tai
+21:48:43 INFO    [VietNamNet] trang 176: 25 link, 25 moi, 25 can tai
+21:49:35 INFO    [VietNamNet] trang 177: 25 link, 25 moi, 25 can tai
+21:50:30 INFO    [VietNamNet] trang 178: 25 link, 25 moi, 25 can tai
+21:51:28 INFO    [VietNamNet] trang 179: 25 link, 25 moi, 25 can tai
+21:52:33 INFO    [VietNamNet] trang 180: 25 link, 25 moi, 25 can tai
+21:53:22 INFO    [VietNamNet] trang 181: 25 link, 25 moi, 25 can tai
+21:54:13 INFO    [VietNamNet] trang 182: 25 link, 24 moi, 24 can tai
+21:55:03 INFO    [VietNamNet] trang 183: 25 link, 25 moi, 25 can tai
+21:55:54 INFO    [VietNamNet] trang 184: 25 link, 24 moi, 24 can tai
+21:56:43 INFO    [VietNamNet] trang 185: 25 link, 25 moi, 25 can tai
+21:56:43 INFO    === VnExpress: bat dau tu trang 1 (toi da 400 trang) ===
+21:56:44 INFO    [VnExpress] trang 1: 30 link, 0 moi, 0 can tai
+21:56:46 INFO    [VnExpress] trang 2: 30 link, 0 moi, 0 can tai
+21:56:48 INFO    [VnExpress] trang 3: 30 link, 0 moi, 0 can tai
+21:56:48 INFO    === VnExpress: dung nguon - 3 trang lien tiep khong co link moi ===
+21:56:48 INFO    === Dan Tri: bat dau tu trang 1 (toi da 400 trang) ===
+21:56:48 INFO    [Dan Tri] trang 1: 26 link, 1 moi, 1 can tai
+21:56:53 INFO    [Dan Tri] trang 2: 21 link, 0 moi, 0 can tai
+21:56:55 WARNING Se dung sau bai hien tai. Bam Ctrl+C lan nua de thoat ngay.
+21:56:55 INFO    [Dan Tri] trang 3: 21 link, 0 moi, 0 can tai
+21:56:55 INFO    === Dan Tri: tam dung (nguoi dung bam Ctrl+C), lan sau chay tiep ===
+21:56:55 INFO    Ket thuc sau 0.2 phut, tai 1 bai moi. Ly do dung: nguoi dung bam Ctrl+C
+21:57:33 INFO    [VietNamNet] trang 186: 25 link, 24 moi, 24 can tai
+21:58:23 INFO    [VietNamNet] trang 187: 25 link, 25 moi, 25 can tai
+21:59:40 INFO    [VietNamNet] trang 188: 25 link, 24 moi, 24 can tai
+22:00:59 INFO    [VietNamNet] trang 189: 25 link, 25 moi, 25 can tai
+22:02:15 INFO    [VietNamNet] trang 190: 25 link, 25 moi, 25 can tai
+22:03:33 INFO    [VietNamNet] trang 191: 25 link, 25 moi, 25 can tai
+22:04:49 INFO    [VietNamNet] trang 192: 25 link, 24 moi, 24 can tai
+22:05:52 INFO    [VietNamNet] trang 193: 25 link, 25 moi, 25 can tai
+22:06:48 INFO    [VietNamNet] trang 194: 25 link, 24 moi, 24 can tai
+22:07:40 INFO    [VietNamNet] trang 195: 25 link, 25 moi, 25 can tai
+22:09:00 INFO    [VietNamNet] trang 196: 25 link, 25 moi, 25 can tai
+22:09:50 INFO    [VietNamNet] trang 197: 25 link, 25 moi, 25 can tai
+22:10:42 INFO    [VietNamNet] trang 198: 25 link, 25 moi, 25 can tai
+22:11:33 INFO    [VietNamNet] trang 199: 25 link, 23 moi, 23 can tai
+22:12:17 INFO    [VietNamNet] trang 200: 25 link, 25 moi, 25 can tai
+22:13:10 INFO    [VietNamNet] trang 201: 25 link, 25 moi, 25 can tai
+22:14:01 INFO    [VietNamNet] trang 202: 25 link, 25 moi, 25 can tai
+22:14:54 INFO    [VietNamNet] trang 203: 25 link, 25 moi, 25 can tai
+22:15:45 INFO    [VietNamNet] trang 204: 25 link, 25 moi, 25 can tai
+22:16:39 INFO    [VietNamNet] trang 205: 25 link, 25 moi, 25 can tai
+22:17:34 INFO    [VietNamNet] trang 206: 25 link, 24 moi, 24 can tai
+22:18:24 INFO    [VietNamNet] trang 207: 25 link, 25 moi, 25 can tai
+22:19:14 INFO    [VietNamNet] trang 208: 25 link, 24 moi, 24 can tai
+22:20:03 INFO    [VietNamNet] trang 209: 25 link, 25 moi, 25 can tai
+22:20:55 INFO    [VietNamNet] trang 210: 25 link, 24 moi, 24 can tai
+22:21:44 INFO    [VietNamNet] trang 211: 25 link, 25 moi, 25 can tai
+22:22:33 INFO    [VietNamNet] trang 212: 25 link, 25 moi, 25 can tai
+22:23:24 INFO    [VietNamNet] trang 213: 25 link, 25 moi, 25 can tai
+22:24:19 INFO    [VietNamNet] trang 214: 25 link, 25 moi, 25 can tai
+22:25:11 INFO    [VietNamNet] trang 215: 25 link, 25 moi, 25 can tai
+22:26:03 INFO    [VietNamNet] trang 216: 25 link, 22 moi, 22 can tai
+22:26:48 INFO    [VietNamNet] trang 217: 25 link, 25 moi, 25 can tai
+22:27:37 INFO    [VietNamNet] trang 218: 25 link, 24 moi, 24 can tai
+22:28:31 INFO    [VietNamNet] trang 219: 25 link, 24 moi, 24 can tai
+22:29:19 INFO    [VietNamNet] trang 220: 25 link, 25 moi, 25 can tai
+22:30:12 INFO    [VietNamNet] trang 221: 25 link, 25 moi, 25 can tai
+22:31:06 INFO    [VietNamNet] trang 222: 25 link, 22 moi, 22 can tai
+22:31:51 INFO    [VietNamNet] trang 223: 25 link, 25 moi, 25 can tai
+22:32:42 INFO    [VietNamNet] trang 224: 25 link, 24 moi, 24 can tai
+22:33:32 INFO    [VietNamNet] trang 225: 25 link, 25 moi, 25 can tai
+22:34:24 INFO    [VietNamNet] trang 226: 25 link, 25 moi, 25 can tai
+22:35:16 INFO    [VietNamNet] trang 227: 25 link, 25 moi, 25 can tai
+22:36:09 INFO    [VietNamNet] trang 228: 25 link, 25 moi, 25 can tai
+22:36:59 INFO    [VietNamNet] trang 229: 25 link, 25 moi, 25 can tai
+22:37:48 INFO    [VietNamNet] trang 230: 25 link, 24 moi, 24 can tai
+22:38:41 INFO    [VietNamNet] trang 231: 25 link, 25 moi, 25 can tai
+22:39:30 INFO    [VietNamNet] trang 232: 25 link, 24 moi, 24 can tai
+22:40:20 INFO    [VietNamNet] trang 233: 25 link, 25 moi, 25 can tai
+22:41:13 INFO    [VietNamNet] trang 234: 25 link, 24 moi, 24 can tai
+22:42:03 INFO    [VietNamNet] trang 235: 25 link, 25 moi, 25 can tai
+22:42:55 INFO    [VietNamNet] trang 236: 25 link, 25 moi, 25 can tai
+22:43:43 INFO    [VietNamNet] trang 237: 25 link, 25 moi, 25 can tai
+22:44:33 INFO    [VietNamNet] trang 238: 25 link, 25 moi, 25 can tai
+22:44:49 INFO    === VietNamNet: tam dung (da tai du 6000 bai), lan sau chay tiep ===
+22:44:49 INFO    Ket thuc sau 227.3 phut, tai 6000 bai moi. Ly do dung: da tai du 6000 bai
+15:34:04 INFO    === Znews: bat dau tu trang 1 (toi da 400 trang) ===
+15:34:06 INFO    [Znews] trang 1: 49 link, 49 moi, 49 can tai
+15:35:45 INFO    [Znews] trang 2: 49 link, 49 moi, 49 can tai
+15:37:20 INFO    [Znews] trang 3: 42 link, 42 moi, 42 can tai
+15:38:47 INFO    [Znews] trang 4: 40 link, 40 moi, 40 can tai
+15:40:10 INFO    [Znews] trang 5: 44 link, 44 moi, 44 can tai
+15:41:43 INFO    [Znews] trang 6: 44 link, 44 moi, 44 can tai
+15:43:11 INFO    [Znews] trang 7: 42 link, 42 moi, 42 can tai
+15:44:34 INFO    [Znews] trang 8: 40 link, 40 moi, 40 can tai
+15:45:56 INFO    [Znews] trang 9: 45 link, 45 moi, 45 can tai
+15:47:27 INFO    [Znews] trang 10: 44 link, 44 moi, 44 can tai
+15:49:03 INFO    [Znews] trang 11: 46 link, 46 moi, 46 can tai
+15:50:38 INFO    [Znews] trang 12: 40 link, 40 moi, 40 can tai
+15:51:57 INFO    [Znews] trang 13: 47 link, 47 moi, 47 can tai
+15:53:36 INFO    [Znews] trang 14: 46 link, 46 moi, 46 can tai
+15:55:10 INFO    [Znews] trang 15: 45 link, 45 moi, 45 can tai
+15:56:44 INFO    [Znews] trang 16: 47 link, 47 moi, 47 can tai
+15:58:22 INFO    [Znews] trang 17: 44 link, 44 moi, 44 can tai
+15:59:50 INFO    [Znews] trang 18: 45 link, 45 moi, 45 can tai
+16:01:26 INFO    [Znews] trang 19: 45 link, 45 moi, 45 can tai
+16:03:02 INFO    [Znews] trang 20: 43 link, 43 moi, 43 can tai
+16:04:35 INFO    [Znews] trang 21: 43 link, 43 moi, 43 can tai
+16:06:02 INFO    [Znews] trang 22: 45 link, 45 moi, 45 can tai
+16:07:30 INFO    [Znews] trang 23: 40 link, 40 moi, 40 can tai
+16:08:54 INFO    [Znews] trang 24: 45 link, 45 moi, 45 can tai
+16:10:26 INFO    [Znews] trang 25: 43 link, 43 moi, 43 can tai
+16:11:58 INFO    [Znews] trang 26: 44 link, 44 moi, 44 can tai
+16:13:29 INFO    [Znews] trang 27: 46 link, 46 moi, 46 can tai
+16:15:04 INFO    [Znews] trang 28: 44 link, 44 moi, 44 can tai
+16:16:35 INFO    [Znews] trang 29: 43 link, 43 moi, 43 can tai
+16:18:00 INFO    [Znews] trang 30: 48 link, 48 moi, 48 can tai
+16:19:37 INFO    [Znews] trang 31: 46 link, 46 moi, 46 can tai
+16:21:14 INFO    [Znews] trang 32: 44 link, 44 moi, 44 can tai
+16:22:42 INFO    [Znews] trang 33: 45 link, 45 moi, 45 can tai
+16:24:10 INFO    [Znews] trang 34: 47 link, 47 moi, 47 can tai
+16:25:46 INFO    [Znews] trang 35: 41 link, 41 moi, 41 can tai
+16:27:12 INFO    [Znews] trang 36: 44 link, 44 moi, 44 can tai
+16:28:45 INFO    [Znews] trang 37: 45 link, 45 moi, 45 can tai
+16:30:11 INFO    [Znews] trang 38: 46 link, 46 moi, 46 can tai
+16:31:51 INFO    [Znews] trang 39: 42 link, 42 moi, 42 can tai
+16:33:22 INFO    [Znews] trang 40: 37 link, 37 moi, 37 can tai
+16:34:41 INFO    [Znews] trang 41: 41 link, 41 moi, 41 can tai
+16:36:09 INFO    [Znews] trang 42: 42 link, 42 moi, 42 can tai
+16:37:31 INFO    [Znews] trang 43: 46 link, 46 moi, 46 can tai
+16:39:07 INFO    [Znews] trang 44: 47 link, 47 moi, 47 can tai
+16:40:36 INFO    [Znews] trang 45: 42 link, 42 moi, 42 can tai
+16:41:59 INFO    [Znews] trang 46: 40 link, 40 moi, 40 can tai
+16:43:25 INFO    [Znews] trang 47: 45 link, 45 moi, 45 can tai
+16:44:52 INFO    [Znews] trang 48: 44 link, 44 moi, 44 can tai
+16:46:22 INFO    [Znews] trang 49: 44 link, 44 moi, 44 can tai
+16:47:53 INFO    [Znews] trang 50: 44 link, 44 moi, 44 can tai
+16:49:22 INFO    === Znews: dung nguon - trang 51 giong het trang truoc (site tra lai trang cu) ===
+16:49:22 INFO    Ket thuc sau 75.3 phut, tai 2200 bai moi. 
