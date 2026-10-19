@@ -1,0 +1,8 @@
+﻿Trường,% thiếu trước,% 'Không rõ' sau,Cách xử lý
+tinh_moi,0.010344827586206896,0.010344827586206896,"Nhãn ""Không rõ"""
+tinh_cu,0.010344827586206896,0.010344827586206896,"Nhãn ""Không rõ"""
+ngay_xay_ra,0.0,0.0,Đã thay bằng ngày đăng khi bài không nêu ngày
+khung_gio,0.06413793103448276,0.06413793103448276,"Nhãn ""Không rõ"" (không suy đoán giờ)"
+loai_duong,0.2393103448275862,0.2393103448275862,"Nhãn ""Không rõ"""
+so_chet,0.4186206896551724,0.0,Điền 0 + cột cờ thieu_so_chet
+so_bi_thuong,0.4627586206896552,0.0,Điền 0 + cột cờ thieu_so_bi_thuong

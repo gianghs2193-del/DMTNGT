@@ -1,0 +1,13 @@
+﻿Nhóm,Phép biến đổi,Cột tạo ra,Mô tả
+1. Rút trích đặc trưng,Trích xuất từ văn bản (regex + từ điển),"tinh_moi, ngay_xay_ra, gio, so_chet, so_bi_thuong, loai_duong + 25 cờ 0/1","Tỉnh, thời gian, thương vong, loại đường, phương tiện, nguyên nhân, kiểu tai nạn, thời tiết"
+1. Rút trích đặc trưng,Đặc trưng suy diễn,"vung, cuoi_tuan, ban_dem, mua_mua, so_phuong_tien, so_nguyen_nhan, tong_thuong_vong, do_dai_bai, so_bai","Vùng miền theo tỉnh; cuối tuần; tối/đêm (18–4h); mùa mưa (tháng 5–10); đếm phương tiện, nguyên nhân; tổng thương vong; số từ của bài; số bài báo đưa tin (mức độ được chú ý)"
+2. Chuẩn hóa,Chuẩn hóa văn bản và giá trị,"title, content, tinh_cu → tinh_moi, ngay_xay_ra, khung_gio","Unicode NFC, chữ thường khi so khớp; biến thể tên tỉnh → tên chuẩn, 63 → 34 tỉnh; ""tối 15/10"", ""đêm qua"" → ngày ISO; giờ → 5 khung giờ"
+2. Chuẩn hóa,Biến đổi log(1 + x),"so_chet_log, so_bi_thuong_log, tong_thuong_vong_log, so_bai_log, do_dai_bai_log, so_phuong_tien_log, so_nguyen_nhan_log","Giảm độ lệch phải (đa số vụ 0–1 người chết, vài vụ 10 người)"
+2. Chuẩn hóa,Min-Max scaling,"so_chet_minmax, so_bi_thuong_minmax, tong_thuong_vong_minmax, so_bai_minmax, do_dai_bai_minmax, so_phuong_tien_minmax, so_nguyen_nhan_minmax","x' = (x − min) / (max − min), đưa về [0, 1] (sau log)"
+2. Chuẩn hóa,Z-score (StandardScaler),"so_chet_z, so_bi_thuong_z, tong_thuong_vong_z, so_bai_z, do_dai_bai_z, so_phuong_tien_z, so_nguyen_nhan_z","z = (x − μ) / σ, trung bình 0, độ lệch chuẩn 1 (cho K-Means, hồi quy…)"
+3. Mã hóa,One-hot encoding,"17 cột (vung_*, duong_*, gio_*)",Biến định danh không có thứ tự → mỗi giá trị một cột 0/1
+3. Mã hóa,Ordinal encoding,"khung_gio_ord, thu_ord, muc_do_ord","Biến có thứ tự → số nguyên (khung giờ 0–4, thứ 0–6, mức độ 0 = không rõ, 1 = bị thương, 2 = có người chết); −1 = không rõ"
+3. Mã hóa,Frequency encoding,tinh_tan_suat,"Tỉnh (34 giá trị) → tỷ lệ số vụ của tỉnh đó, tránh tạo 34 cột one-hot thưa"
+3. Mã hóa,Mã hóa chu kỳ sin/cos,"gio_sin, gio_cos, thu_sin, thu_cos, thang_sin, thang_cos","Giờ, thứ, tháng là biến vòng: sin/cos giữ được việc 23h gần 0h, Chủ nhật gần Thứ 2"
+3. Mã hóa,Rời rạc hóa (binning),"nhom_so_chet → chet_0, chet_1, chet_2, chet_3-5, chet_>5","Số người chết → nhóm, dùng cho luật kết hợp (Apriori cần biến rời rạc)"
+3. Mã hóa,Biến nhị phân giữ nguyên,31 cột 0/1,"Cờ phương tiện, nguyên nhân, kiểu tai nạn, thời tiết, cuối tuần, ban đêm, lễ Tết, cờ thiếu. Lưu ý: không dùng thieu_so_chet, so_chet_*, chet_* làm đầu vào khi dự đoán nhãn có tử vong (rò rỉ nhãn)"

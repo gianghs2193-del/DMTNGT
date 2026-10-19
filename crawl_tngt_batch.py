@@ -255,10 +255,7 @@ class StopController:
         while time.time() < end:
             if self.should_stop():
                 return
-            remaining = end - time.time()
-            if remaining <= 0:  # should_stop() ton thoi gian, co the da qua han
-                return
-            time.sleep(min(0.5, remaining))
+            time.sleep(min(0.5, end - time.time()))
 
 
 # =====================================================================
@@ -384,11 +381,22 @@ CREATE TABLE IF NOT EXISTS articles (
 
 
 class Store:
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, read_only=False):
         self.data_dir = data_dir
         self.html_dir = os.path.join(data_dir, "raw_html")
+        db_path = os.path.join(data_dir, "tngt_raw.sqlite3")
+        if read_only:
+            # stats/export: chi doc, khong tranh khoa ghi voi tien trinh dang cao
+            if not os.path.exists(db_path):
+                raise SystemExit(f"Chua co du lieu: khong thay {os.path.abspath(db_path)}. "
+                                 "Hay chay lenh trong dung thu muc da chay `run`.")
+            uri = "file:" + os.path.abspath(db_path).replace("\\", "/") + "?mode=ro"
+            self.db = sqlite3.connect(uri, uri=True, timeout=30)
+            self.db.row_factory = sqlite3.Row
+            return
         os.makedirs(self.html_dir, exist_ok=True)
-        self.db = sqlite3.connect(os.path.join(data_dir, "tngt_raw.sqlite3"))
+        # timeout=30: neu file dang bi tien trinh khac ghi thi cho, khong bao loi ngay
+        self.db = sqlite3.connect(db_path, timeout=30)
         self.db.row_factory = sqlite3.Row
         self.db.execute("PRAGMA journal_mode=WAL")
         self.db.executescript(SCHEMA)
@@ -409,15 +417,31 @@ class Store:
         self.db.commit()
 
     # --- URL ---
+    @staticmethod
+    def url_hash(url):
+        """Ma bam SHA-1 cua URL da chuan hoa (khoa cua bang bam hang doi)."""
+        return hashlib.sha1(url.encode("utf-8")).hexdigest()
+
+    def _load_seen(self):
+        # Bang bam (set) chua ma bam moi URL da tung vao hang doi -> kiem tra trung O(1)
+        if not hasattr(self, "seen"):
+            self.seen = {self.url_hash(r[0]) for r in self.db.execute("SELECT url FROM urls")}
+        return self.seen
+
     def add_urls(self, source, page, links):
-        """links: list[(url, title_hint)]. Tra ve danh sach URL moi them."""
+        """links: list[(url, title_hint)]. Kiem tra hang doi bang ham bam truoc khi them.
+        Tra ve danh sach URL moi them."""
+        seen = self._load_seen()
         new = []
         for url, hint in links:
-            cur = self.db.execute(
+            h = self.url_hash(url)
+            if h in seen:            # da co trong hang doi / da tai -> bo qua, khong cham CSDL
+                continue
+            seen.add(h)
+            self.db.execute(
                 "INSERT OR IGNORE INTO urls(url,source,title_hint,list_page,discovered_at) "
                 "VALUES(?,?,?,?,?)", (url, source, hint, page, now_iso()))
-            if cur.rowcount:
-                new.append(url)
+            new.append(url)
         self.db.commit()
         return new
 
@@ -701,8 +725,6 @@ class Crawler:
             # chi ghi trang da xong khi da duyet het bai cua trang do
             if not self.stopper.flag:
                 self.store.set_progress(key, page)
-            elif not stop_reason:
-                break  # dung toan cuc giua trang: khong roi vao nhanh else (danh dau xong)
             if stop_reason:
                 break
             if empty_pages >= cfg["empty_pages_to_stop"]:
@@ -777,8 +799,7 @@ def export_csv(store, out_path, only_candidates=False):
 # =====================================================================
 def main():
     ap = argparse.ArgumentParser(description="Cao du lieu tho TNGT duong bo theo path")
-    ap.add_argument("command", nargs="?", default="run", choices=["run", "fetch", "stats", "export"],
-                    help="mac dinh: run (khi bam Run trong IDE khong co tham so)")
+    ap.add_argument("command", choices=["run", "fetch", "stats", "export"])
     ap.add_argument("--sources", default=",".join(SOURCES),
                     help=f"cac nguon, cach nhau dau phay ({','.join(SOURCES)})")
     ap.add_argument("--max-pages", type=int, help="ghi de max_pages_per_source")
@@ -799,8 +820,12 @@ def main():
     if args.stop_before:
         cfg["stop_before"] = args.stop_before
 
-    setup_logging(cfg["data_dir"])
-    store = Store(cfg["data_dir"])
+    if args.command in ("stats", "export"):
+        logging.basicConfig(level=logging.INFO, format="%(message)s")
+        store = Store(cfg["data_dir"], read_only=True)
+    else:
+        setup_logging(cfg["data_dir"])
+        store = Store(cfg["data_dir"])
 
     if args.command == "stats":
         print_stats(store)

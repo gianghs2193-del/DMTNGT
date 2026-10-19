@@ -20,7 +20,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+import tngt_clean as C
 import tngt_features as F
+import tngt_ml as M
+import tngt_pipeline as P
 
 st.set_page_config(page_title="TNGT đường bộ Việt Nam", page_icon="🚦", layout="wide")
 
@@ -61,48 +64,37 @@ def show(fig, **kw):
 
 
 # ---------------------------------------------------------------------
-# Doc du lieu + trich xuat (co cache)
+# Chay toan bo quy trinh (tngt_pipeline). Khoa cache gom PHIEN BAN MA NGUON: sua bat ky file
+# xu ly nao thi app tu tinh lai, khong dung ket qua cu.
 # ---------------------------------------------------------------------
-@st.cache_data(show_spinner="Đang đọc và trích xuất dữ liệu...")
-def load_from_sqlite(path, mtime):
-    uri = "file:" + os.path.abspath(path).replace("\\", "/") + "?mode=ro"
-    con = sqlite3.connect(uri, uri=True, timeout=30)
-    try:
-        df = pd.read_sql_query(
-            "SELECT source, url, published, title, sapo, content FROM articles", con)
-    finally:
-        con.close()
-    return prepare(df)
+@st.cache_data(show_spinner="Đang làm sạch, lọc, kiểm tra trùng bằng hàm băm và biến đổi dữ liệu...")
+def run_all(src, version):
+    df = P.doc_sqlite(src[1]) if src[0] == "sqlite" else pd.read_csv(io.BytesIO(src[1]), encoding="utf-8-sig")
+    return P.chay(df)
 
 
-@st.cache_data(show_spinner="Đang đọc và trích xuất dữ liệu...")
-def load_from_csv(raw_bytes, digest):
-    df = pd.read_csv(io.BytesIO(raw_bytes), encoding="utf-8-sig")
-    return prepare(df)
+def run_pipeline(src):
+    r = run_all(src, P.code_version())
+    return r["bai"], r["vu"], r["acc"]
 
 
-def prepare(df):
-    for c in ("source", "url", "published", "title", "sapo", "content"):
-        if c not in df:
-            df[c] = None
-    df = df.drop_duplicates("url")
-    bai = F.extract_features(df)
-    vu, bai_tngt = F.gop_vu(bai[bai["la_tngt"] == 1])
-    return bai, vu
+def run_transform(src):
+    r = run_all(src, P.code_version())
+    return r["X"], r["bien_doi"], r["demo"]
 
 
 # ---------------------------------------------------------------------
-# Sidebar: nguon du lieu + bo loc
+# Sidebar: nguon du lieu + phuong phap loc + bo loc
 # ---------------------------------------------------------------------
 st.sidebar.title("🚦 TNGT đường bộ")
 src_mode = st.sidebar.radio("Nguồn dữ liệu", ["File SQLite của crawler", "Tải lên CSV"], horizontal=False)
 if src_mode == "File SQLite của crawler":
-    path = st.sidebar.text_input("Đường dẫn", "data/tngt_raw.sqlite3")
+    path = st.sidebar.text_input("Đường dẫn SQLite", "data/tngt_raw.sqlite3")
     if not os.path.exists(path):
         st.info(f"Không tìm thấy `{os.path.abspath(path)}`. Hãy chạy app trong thư mục chứa "
                 "thư mục `data/` của crawler, hoặc sửa đường dẫn / tải lên CSV ở thanh bên.")
         st.stop()
-    bai, vu = load_from_sqlite(path, os.path.getmtime(path))
+    SRC = ("sqlite", path, os.path.getmtime(path))
     if st.sidebar.button("🔄 Nạp lại dữ liệu mới"):
         st.cache_data.clear()
         st.rerun()
@@ -111,12 +103,12 @@ else:
     if not up:
         st.info("Tải lên file CSV xuất từ crawler (`python crawl_tngt.py export`).")
         st.stop()
-    raw = up.getvalue()
-    bai, vu = load_from_csv(raw, hashlib.md5(raw).hexdigest())
+    SRC = ("csv", up.getvalue())
+
+bai, vu, ACC = run_pipeline(SRC)
 
 if vu.empty:
     st.warning("Chưa có bài nào được nhận là tin tai nạn giao thông.")
-    st.stop()
 
 st.sidebar.divider()
 st.sidebar.subheader("Bộ lọc")
@@ -146,24 +138,246 @@ def apply_filters(d):
     return d[m]
 
 
-V = apply_filters(vu)
+V = apply_filters(vu) if not vu.empty else vu
 B = bai[bai["source"].isin(sel_src)]
-if V.empty:
-    st.warning("Không có vụ nào khớp bộ lọc.")
-    st.stop()
-base_rate = V["co_tu_vong"].mean()
+base_rate = V["co_tu_vong"].mean() if not V.empty else np.nan
 
 st.title("Phân tích yếu tố gây thương vong trong TNGT đường bộ")
-st.caption("Dữ liệu từ tin báo điện tử; các trường được trích xuất tự động theo luật nên là ước lượng, "
+st.caption("Trùng lặp được kiểm tra bằng **hàm băm** (SHA-1 + MinHash-LSH). Bài TNGT được lọc tự động. "
+           "Các trường (tỉnh, thương vong, phương tiện...) trích xuất tự động theo luật nên là ước lượng, "
            "cần đối chiếu mẫu. Mỗi **vụ** có thể gộp nhiều bài báo cùng đưa tin.")
 
-tabs = st.tabs(["📊 Tổng quan", "🕒 Thời gian", "📍 Địa điểm", "⚠️ Yếu tố & thương vong",
-                "🔗 Luật kết hợp", "🗂️ Dữ liệu & chất lượng"])
+tabs = st.tabs(["🔑 Hàm băm & trùng lặp", "🧹 Làm sạch dữ liệu", "🔧 Biến đổi dữ liệu", "📊 Tổng quan", "🕒 Thời gian", "📍 Địa điểm",
+                "⚠️ Yếu tố & thương vong", "🔗 Luật kết hợp", "🗂️ Dữ liệu & chất lượng"])
+
+# =====================================================================
+# Tab 1: Ham bam & trung lap (trong tam cua app; ve truoc de luon hien)
+# =====================================================================
+with tabs[0]:
+    TH = bai.attrs.get("trung_hash", {})
+    KS = vu.attrs.get("kiem_tra_trung", {})
+    st.markdown("Hàm băm là **kỹ thuật chính** để kiểm tra trùng lặp, áp dụng ở 3 mức, từ trùng tuyệt đối "
+                "đến trùng gần đúng. Mỗi phép kiểm tra trùng chỉ cần tra bảng băm, không phải so sánh "
+                "từng cặp bài.")
+    c = st.columns(5)
+    c[0].metric("URL duy nhất", f"{TH.get('so_bai_goc', len(bai)):,}")
+    c[1].metric("Trùng nội dung (SHA-1)", f"{TH.get('trung_noi_dung_sha1', 0):,}")
+    c[2].metric("Bài tin TNGT", f"{int(bai['la_tngt'].sum()):,}", help="Lọc tự động trước khi gộp vụ")
+    c[3].metric("Cặp ứng viên từ băm", f"{KS.get('cap_ung_vien_tong', 0):,}")
+    c[4].metric("Số vụ sau gộp", f"{KS.get('so_vu', len(vu)):,}")
+
+    # ---- Muc 1 ----
+    st.subheader("Mức 1 · Băm URL: kiểm tra hàng đợi của crawler")
+    st.markdown(
+        "URL được chuẩn hóa (bỏ `?utm=...`, `#comment`) rồi băm **SHA-1**. Crawler giữ một bảng băm (`set`) "
+        "chứa mã băm của mọi URL đã từng vào hàng đợi. Link mới chỉ được thêm khi mã băm **chưa có** trong "
+        "bảng, nên mỗi lần kiểm tra mất O(1), không phải tra cơ sở dữ liệu.")
+
+    # ---- Muc 2 ----
+    st.subheader("Mức 2 · SHA-1 nội dung: bài trùng tuyệt đối")
+    st.markdown(
+        "Tiêu đề + nội dung được chuẩn hóa (chữ thường, bỏ dấu câu, gộp khoảng trắng) rồi băm SHA-1 thành "
+        "chuỗi 40 ký tự. Hai bài giống hệt nhau (kể cả đăng ở hai báo khác nhau) cho cùng một mã băm. Bảng "
+        "băm `mã băm → bài đầu tiên` giữ lại một bản, độ phức tạp O(n).")
+    demo_a = "Lật xe chở sắt thép, hai bố con tử vong"
+    demo_b = "Lật xe chở sắt thép, hai bố con tử vong."
+    demo_c = "Lật xe chở sắt thép, hai bố con tử vọng"
+    demo = pd.DataFrame({"Chuỗi đầu vào": [demo_a, demo_b, demo_c],
+                         "Sau chuẩn hóa": [F.normalize_for_hash(x) for x in (demo_a, demo_b, demo_c)],
+                         "SHA-1": [F.content_hash(x, "") for x in (demo_a, demo_b, demo_c)]})
+    st.dataframe(demo, hide_index=True, use_container_width=True)
+    st.caption("Dòng 1 và 2 chỉ khác dấu chấm nên sau chuẩn hóa cho cùng mã băm. Dòng 3 khác một dấu thanh "
+               "nhưng mã băm khác hoàn toàn (hiệu ứng thác lũ). Vì vậy SHA-1 chỉ bắt được trùng tuyệt đối, "
+               "cần thêm mức 3.")
+    groups = pd.DataFrame(TH.get("nhom_trung", []))
+    if groups.empty:
+        st.info("Không có bài trùng tuyệt đối nội dung.")
+    else:
+        groups["ma_bam"] = groups["ma_bam"].str[:12] + "…"
+        st.markdown(f"**Các nhóm bài trùng tuyệt đối tìm được** ({TH.get('trung_noi_dung_sha1', 0)} bài bị loại)")
+        st.dataframe(groups.rename(columns={"ma_bam": "Mã băm", "source": "Báo", "title": "Tiêu đề"}),
+                     hide_index=True, use_container_width=True,
+                     column_config={"url": st.column_config.LinkColumn("Link")})
+
+    # ---- Muc 3 ----
+    st.subheader("Mức 3 · MinHash + LSH: nhiều báo đưa tin cùng một vụ")
+    if KS:
+        b_, r_ = KS["so_bang"], KS["so_hang_moi_bang"]
+        st.markdown(
+            f"1. **Shingling:** tách tiêu đề + sapo thành các cụm 2 từ (\"lật xe\", \"xe chở\", …).\n"
+            f"2. **MinHash:** dùng {KS['so_ham_bam']} hàm băm hᵢ(x) = (aᵢ·x + bᵢ) mod p. Với mỗi hàm, lấy giá "
+            "trị nhỏ nhất trên tập cụm, được chữ ký 128 số. Xác suất hai chữ ký trùng ở một vị trí "
+            "**bằng đúng độ tương đồng Jaccard** của hai bài.\n"
+            f"3. **LSH:** chia chữ ký thành {b_} băng × {r_} hàng, băm từng băng vào thùng. Hai bài rơi chung "
+            "thùng ở ít nhất một băng thì thành cặp ứng viên. Thêm khối băm theo khóa (tỉnh, ngày) để bắt "
+            "bài viết rất khác nhưng cùng tỉnh, cùng ngày, cùng số người chết.\n"
+            "4. Cặp ứng viên cách nhau tối đa 1 ngày, cùng tỉnh và Jaccard ≥ 0,22 thì được gộp. "
+            "Union-Find gom các cặp thành từng vụ.")
+        c1, c2 = st.columns(2)
+        with c1:
+            s_ = np.linspace(0, 1, 101)
+            curve = pd.DataFrame({"Jaccard": s_, "P": 1 - (1 - s_ ** r_) ** b_})
+            fig = px.line(curve, x="Jaccard", y="P",
+                          title=f"Xác suất thành cặp ứng viên (b={b_}, r={r_})",
+                          labels={"Jaccard": "Độ tương đồng Jaccard thật", "P": "P(chung thùng băm)"})
+            fig.update_traces(line=dict(width=2, color=pal()["cat"][0]),
+                              hovertemplate="Jaccard %{x:.2f}: <b>%{y:.1%}</b><extra></extra>")
+            fig.add_vline(x=0.22, line_dash="dot", line_color=pal()["muted"],
+                          annotation_text="ngưỡng gộp 0,22", annotation_position="bottom right")
+            fig.update_yaxes(tickformat=".0%")
+            show(fig, height=340)
+        with c2:
+            cmp_ = pd.DataFrame({"Cách làm": ["So sánh vét cạn mọi cặp", "Ứng viên từ hàm băm"],
+                                 "Số cặp phải so": [KS["cap_so_sanh_neu_vet_can"], KS["cap_ung_vien_tong"]]})
+            fig = px.bar(cmp_, x="Cách làm", y="Số cặp phải so", log_y=True,
+                         title=f"Số cặp phải so sánh: còn "
+                               f"{KS['cap_ung_vien_tong'] / max(KS['cap_so_sanh_neu_vet_can'], 1):.1%}",
+                         labels={"Cách làm": ""})
+            fig.update_traces(marker_color=pal()["cat"][0], texttemplate="%{y:,}", textposition="outside",
+                              hovertemplate="%{x}: <b>%{y:,} cặp</b><extra></extra>")
+            show(fig, height=340)
+        st.caption(f"Ngưỡng LSH xấp xỉ (1/b)^(1/r) = {KS['nguong_lsh_xap_xi']}: cặp có Jaccard trên mức này gần như "
+                   "chắc chắn thành ứng viên. Kiểm tra trên dữ liệu: LSH bắt được khoảng 99% số cặp có "
+                   "Jaccard ≥ 0,22, và số vụ ra trùng khớp với cách so sánh vét cạn.")
+
+    multi = ACC[ACC.groupby("vu_id")["url"].transform("size") > 1] if len(ACC) else ACC
+    if len(multi):
+        st.markdown(f"**Ví dụ các vụ được gộp từ nhiều bài** ({multi['vu_id'].nunique():,} vụ có từ 2 bài trở lên)")
+        top_ids = multi.groupby("vu_id")["url"].size().sort_values(ascending=False).index[:40]
+        ex = multi[multi["vu_id"].isin(top_ids)].sort_values(["vu_id", "ngay_xay_ra"])
+        ex = ex.assign(Vụ=ex["vu_id"].map({v: i + 1 for i, v in enumerate(top_ids)})).sort_values("Vụ")
+        st.dataframe(ex[["Vụ", "ngay_xay_ra", "source", "title", "url"]], hide_index=True,
+                     use_container_width=True, height=380,
+                     column_config={"url": st.column_config.LinkColumn("Link"), "source": "Báo",
+                                    "title": "Tiêu đề", "ngay_xay_ra": st.column_config.DateColumn(
+                                        "Ngày", format="DD/MM/YYYY")})
+    st.caption("Trước khi gộp vụ, bài được lọc tự động để chỉ giữ tin TNGT đường bộ (bước tiền xử lý cố định "
+               "bằng học bán giám sát, không gán nhãn tay).")
+
+# =====================================================================
+# Tab 2: Lam sach du lieu
+# =====================================================================
+with tabs[1]:
+    rp = pd.DataFrame(vu.attrs.get("lam_sach", []))
+    st.markdown("Các bước làm sạch chạy tự động mỗi lần nạp dữ liệu, theo thứ tự dưới đây. Mỗi bước ghi "
+                "số bản ghi trước và sau khi xử lý.")
+    if not rp.empty:
+        c = st.columns(4)
+        for col, loai in zip(c, ["Dữ liệu trùng", "Giá trị thiếu", "Dữ liệu nhiễu", "Ngoại lai"]):
+            col.metric(loai, f"{-int(rp.loc[rp['Loại vấn đề'] == loai, 'Thay đổi'].sum()):,} bị loại")
+        st.dataframe(rp, hide_index=True, use_container_width=True)
+        g = rp.groupby("Loại vấn đề", sort=False)["Thay đổi"].sum().abs().reset_index()
+        fig = px.bar(g.sort_values("Thay đổi"), y="Loại vấn đề", x="Thay đổi", orientation="h",
+                     title="Số bản ghi bị loại/gộp theo loại vấn đề", labels={"Thay đổi": "Số bản ghi", "Loại vấn đề": ""})
+        fig.update_traces(marker_color=pal()["cat"][0], texttemplate="%{x:,}", textposition="outside",
+                          hovertemplate="%{y}: <b>%{x:,}</b><extra></extra>")
+        show(fig, height=280)
+    th = pd.DataFrame(vu.attrs.get("thieu", []))
+    if not th.empty:
+        st.subheader("Giá trị thiếu sau khi trích xuất (trên bảng vụ)")
+        st.dataframe(th, hide_index=True, use_container_width=True, column_config={
+            "% thiếu trước": st.column_config.ProgressColumn(format="%.0f%%", min_value=0, max_value=1),
+            "% 'Không rõ' sau": st.column_config.NumberColumn(format="%.2f")})
+        st.caption("Không suy đoán (impute) tỉnh, giờ hay loại đường, vì điền sai sẽ làm lệch kết quả phân "
+                   "tích. Các giá trị này được gắn nhãn \"Không rõ\" và tách riêng khi vẽ biểu đồ. Số người chết "
+                   "hoặc bị thương không được nhắc trong bài thì điền 0 kèm cột cờ để vẫn phân biệt được.")
+    st.subheader("Ví dụ trước / sau khi làm sạch")
+    ex1 = pd.DataFrame(vu.attrs.get("vi_du_noi_dung", []))
+    if not ex1.empty:
+        st.markdown("**Dòng rác đã xóa khỏi nội dung bài**")
+        st.dataframe(ex1.rename(columns={"title": "Bài", "da_xoa": "Đã xóa"}), hide_index=True,
+                     use_container_width=True)
+    ex2 = pd.DataFrame(vu.attrs.get("vi_du_sapo", []))
+    if not ex2.empty:
+        st.markdown("**Sapo bị thiếu → điền bằng câu đầu bài**")
+        st.dataframe(ex2.rename(columns={"title": "Bài", "sapo_cu": "Sapo cũ", "sapo_moi": "Sapo mới"}),
+                     hide_index=True, use_container_width=True)
+    ex3 = vu[["title", "so_chet", "thieu_so_chet", "so_bi_thuong", "thieu_so_bi_thuong", "tinh_moi",
+              "khung_gio", "loai_duong"]]
+    ex3 = ex3[(ex3["thieu_so_chet"] == 1) | (ex3["tinh_moi"] == "Không rõ") | (ex3["khung_gio"].astype(str) == "Không rõ")]
+    if len(ex3):
+        st.markdown("**Vụ có giá trị thiếu đã được xử lý** (0 kèm cờ = 1 là giá trị điền vào; \"Không rõ\" là nhãn)")
+        st.dataframe(ex3.head(15), hide_index=True, use_container_width=True)
+    BL = run_all(SRC, P.code_version())["bi_loai"]
+    with st.expander(f"Danh sách {len(BL):,} bài bị loại và lý do"):
+        st.dataframe(BL["ly_do"].value_counts().rename_axis("Lý do").reset_index(name="Số bài"), hide_index=True)
+        st.dataframe(BL, hide_index=True, use_container_width=True, height=300,
+                     column_config={"url": st.column_config.LinkColumn("Link")})
+
+    st.subheader("Lưu dữ liệu đã xử lý ra file")
+    st.caption("Dữ liệu thô trong SQLite được giữ nguyên. Kết quả làm sạch và biến đổi được ghi thành các "
+               "file CSV riêng, mở được bằng Excel.")
+    out_dir = os.path.join(os.path.dirname(SRC[1]) if SRC[0] == "sqlite" else "data", "processed")
+    if st.button(f"💾 Lưu vào {out_dir}"):
+        for path_, n_, k_ in P.xuat(run_all(SRC, P.code_version()), out_dir):
+            st.write(f"✅ `{path_}`: {n_:,} dòng × {k_} cột")
+
+    st.subheader("Ngoại lai")
+    st.markdown(f"- Một vụ có trên **{F.MAX_CHET_MOT_VU} người chết** hoặc trên **{F.MAX_BI_THUONG_MOT_VU} người "
+                "bị thương** được coi là bài thống kê tổng hợp và bị loại, vì vụ TNGT đường bộ nghiêm trọng nhất "
+                "ở Việt Nam hiếm khi vượt mức này.\n"
+                "- Khi đếm thương vong, chỉ tính con số đi kèm danh từ chỉ người (\"3 người\", \"hai bố con\"), "
+                "để tránh đếm nhầm \"lớp 12\", \"29 Tết\", \"20 con heo\", \"thoát chết\".")
+    if len(vu):
+        top = vu.nlargest(10, "so_chet")[["so_chet", "so_bi_thuong", "tinh_moi", "title", "url"]]
+        st.markdown("**10 vụ có số người chết cao nhất** (nên đọc lại để kiểm tra ngoại lai còn sót)")
+        st.dataframe(top, hide_index=True, use_container_width=True,
+                     column_config={"url": st.column_config.LinkColumn("Link")})
+
+# =====================================================================
+# Tab 3: Bien doi du lieu (rut trich dac trung, chuan hoa, ma hoa)
+# =====================================================================
+with tabs[2]:
+    if len(vu):
+        X, TREP, TDEMO = run_transform(SRC)
+        st.markdown("Bảng **vụ** sau làm sạch được biến đổi thành **bảng đặc trưng toàn số**, sẵn sàng cho "
+                    "luật kết hợp, phân cụm và phân lớp. Thứ tự: rút trích đặc trưng → chuẩn hóa → mã hóa.")
+        c = st.columns(3)
+        c[0].metric("Số vụ (dòng)", f"{len(X):,}")
+        c[1].metric("Số đặc trưng (cột)", f"{X.shape[1] - 2:,}", help="Không tính vu_id và cột nhãn")
+        c[2].metric("Nhãn: vụ có người chết", f"{X['NHAN_co_tu_vong'].mean():.0%}")
+        st.dataframe(TREP, hide_index=True, use_container_width=True)
+
+        st.subheader("Ví dụ chuẩn hóa: số người chết")
+        desc = TDEMO.describe().T[["min", "max", "mean", "std"]].rename(
+            columns={"min": "Nhỏ nhất", "max": "Lớn nhất", "mean": "Trung bình", "std": "Độ lệch chuẩn"})
+        st.dataframe(desc, use_container_width=True,
+                     column_config={k: st.column_config.NumberColumn(format="%.3f") for k in desc.columns})
+        st.caption("log(1+x) giảm ảnh hưởng của các vụ rất nặng; Min-Max đưa về [0, 1]; Z-score đưa về "
+                   "trung bình 0, độ lệch chuẩn 1, để các đặc trưng có thang đo ngang nhau.")
+
+        st.subheader("Đặc trưng liên quan nhiều nhất tới tử vong")
+        bin_cols = [c_ for c_ in X.columns if X[c_].dropna().isin([0, 1]).all()
+                    and c_ not in ("NHAN_co_tu_vong", "vu_id") and not c_.startswith(("chet_", "thieu_"))
+                    and X[c_].sum() >= 10]
+        corr = X[bin_cols].corrwith(X["NHAN_co_tu_vong"]).dropna()
+        top = pd.concat([corr.nlargest(8), corr.nsmallest(7)]).sort_values().reset_index()
+        top.columns = ["Đặc trưng", "Tương quan"]
+        fig = px.bar(top, y="Đặc trưng", x="Tương quan", orientation="h",
+                     title="Hệ số tương quan (phi) của đặc trưng nhị phân với nhãn có tử vong",
+                     labels={"Đặc trưng": ""})
+        fig.update_traces(marker_color=[pal()["cat"][1] if v > 0 else pal()["cat"][0] for v in top["Tương quan"]],
+                          hovertemplate="%{y}: <b>%{x:.3f}</b><extra></extra>")
+        fig.add_vline(x=0, line_color=pal()["muted"])
+        show(fig, height=460)
+        st.caption("Dương: đặc trưng đi kèm vụ có người chết nhiều hơn; âm: ít hơn. Đây là tương quan, "
+                   "không phải nhân quả.")
+
+        st.subheader("Xem trước bảng đặc trưng")
+        st.dataframe(X.head(30), use_container_width=True, height=300)
+        st.download_button("⬇️ Tải bảng đặc trưng (CSV)", X.to_csv(index=False).encode("utf-8-sig"),
+                           "dac_trung_tngt.csv", "text/csv")
+
+if V.empty:
+    for t in tabs[3:]:
+        with t:
+            st.info("Chưa có vụ nào khớp bộ lọc / chưa có bài được nhận là TNGT.")
+    st.stop()
 
 # =====================================================================
 # Tab 1: Tong quan
 # =====================================================================
-with tabs[0]:
+with tabs[3]:
     c = st.columns(5)
     c[0].metric("Bài báo đã cào", f"{len(B):,}")
     c[1].metric("Bài là tin TNGT", f"{int(B['la_tngt'].sum()):,}")
@@ -206,7 +420,7 @@ with tabs[0]:
 # =====================================================================
 # Tab 2: Thoi gian
 # =====================================================================
-with tabs[1]:
+with tabs[4]:
     c1, c2 = st.columns(2)
     with c1:
         w = V["thu"].value_counts().reindex(F.WEEKDAYS).fillna(0).reset_index()
@@ -217,7 +431,7 @@ with tabs[1]:
     with c2:
         t = V["khung_gio"].value_counts().reindex(F.TIME_BUCKETS).fillna(0).reset_index()
         t.columns = ["Khung giờ", "Số vụ"]
-        known = V["khung_gio"].notna().mean()
+        known = (V["khung_gio"].astype(str) != "Không rõ").mean()
         fig = px.bar(t, x="Khung giờ", y="Số vụ",
                      title=f"Số vụ theo khung giờ (xác định được giờ ở {known:.0%} số vụ)")
         fig.update_traces(marker_color=pal()["cat"][0], hovertemplate="%{x}: <b>%{y} vụ</b><extra></extra>")
@@ -257,8 +471,8 @@ with tabs[1]:
 # =====================================================================
 # Tab 3: Dia diem
 # =====================================================================
-with tabs[2]:
-    p = V.dropna(subset=[prov_col]).groupby(prov_col).agg(
+with tabs[5]:
+    p = V[V[prov_col] != "Không rõ"].groupby(prov_col).agg(
         so_vu=("vu_id", "size"), so_chet=("so_chet", "sum"),
         ty_le_chet=("co_tu_vong", "mean")).reset_index()
     c1, c2 = st.columns(2)
@@ -279,7 +493,7 @@ with tabs[2]:
         fig.add_vline(x=base_rate, line_dash="dot", line_color=pal()["muted"])
         fig.update_xaxes(tickformat=".0%")
         show(fig, height=480)
-    st.caption(f"Xác định được tỉnh ở {V[prov_col].notna().mean():.0%} số vụ. Số vụ phản ánh mức độ "
+    st.caption(f"Xác định được tỉnh ở {(V[prov_col] != "Không rõ").mean():.0%} số vụ. Số vụ phản ánh mức độ "
                "được báo chí đưa tin, không phải số liệu chính thức: tỉnh có nhiều tin không nhất thiết "
                "có nhiều tai nạn hơn.")
 
@@ -326,7 +540,7 @@ def factor_table(d, prefix):
     return pd.DataFrame(rows)
 
 
-with tabs[3]:
+with tabs[6]:
     st.markdown(f"So sánh **tỷ lệ vụ có người chết** khi có từng yếu tố với mức trung bình "
                 f"**{base_rate:.0%}**. Lift > 1 nghĩa là yếu tố đó đi kèm tử vong nhiều hơn bình thường "
                 "(tương quan, chưa phải nhân quả).")
@@ -381,7 +595,7 @@ with tabs[3]:
 # =====================================================================
 # Tab 5: Luat ket hop
 # =====================================================================
-with tabs[4]:
+with tabs[7]:
     st.markdown("Tìm các tổ hợp yếu tố hay xuất hiện cùng nhau bằng **Apriori** "
                 "(support = tỷ lệ vụ chứa tổ hợp, confidence = P(vế phải | vế trái), "
                 "lift = confidence / tỷ lệ chung của vế phải).")
@@ -411,7 +625,7 @@ with tabs[4]:
 # =====================================================================
 # Tab 6: Du lieu & chat luong
 # =====================================================================
-with tabs[5]:
+with tabs[8]:
     show_cols = ["ngay_xay_ra", prov_col, "title", "so_chet", "so_bi_thuong", "muc_do", "khung_gio",
                  "loai_duong", "so_bai", "cac_nguon", "url"]
     q = st.text_input("Tìm trong tiêu đề", "")
@@ -443,19 +657,22 @@ with tabs[5]:
             st.text_area("Nội dung", r["content"] or "", height=250)
 
     with st.expander("Chất lượng dữ liệu: phễu lọc và lý do loại bài"):
-        fun = pd.DataFrame({"Bước": ["Bài đã cào", "Bài là tin TNGT", "Vụ sau gộp trùng"],
-                            "Số lượng": [len(B), int(B["la_tngt"].sum()), len(V)]})
+        th = bai.attrs.get("trung_hash", {})
+        fun = pd.DataFrame({"Bước": ["Bài đã cào (URL duy nhất)", "Loại bài trùng nội dung (SHA-1)",
+                                     "Bài là tin TNGT", "Vụ sau gộp trùng (MinHash-LSH)"],
+                            "Số lượng": [th.get("so_bai_goc", len(bai)), -th.get("trung_noi_dung_sha1", 0),
+                                         int(B["la_tngt"].sum()), len(V)]})
         st.dataframe(fun, hide_index=True)
         why = B.loc[B["la_tngt"] == 0, "ly_do_loai"].str.replace(r":.*", "", regex=True) \
             .value_counts().rename_axis("Lý do").reset_index(name="Số bài")
         st.dataframe(why, hide_index=True)
         cov = pd.DataFrame({"Trường": ["Tỉnh", "Ngày từ nội dung bài", "Khung giờ", "Số chết/bị thương",
                                        "Loại đường"],
-                            "Tỷ lệ xác định được": [V[prov_col].notna().mean(),
+                            "Tỷ lệ xác định được": [(V[prov_col] != "Không rõ").mean(),
                                                     (V["nguon_ngay"] != "ngay_dang").mean(),
-                                                    V["khung_gio"].notna().mean(),
-                                                    (V["so_chet"].notna() | V["so_bi_thuong"].notna()).mean(),
-                                                    (V["loai_duong"] != "khác/không rõ").mean()]})
+                                                    (V["khung_gio"].astype(str) != "Không rõ").mean(),
+                                                    ((V["thieu_so_chet"] == 0) | (V["thieu_so_bi_thuong"] == 0)).mean(),
+                                                    (V["loai_duong"] != "Không rõ").mean()]})
         st.dataframe(cov, hide_index=True,
                      column_config={"Tỷ lệ xác định được": st.column_config.NumberColumn(format="%.2f")})
         st.caption("Gợi ý cho báo cáo: lấy ngẫu nhiên ~100 vụ, tự đối chiếu với bài gốc để tính độ "

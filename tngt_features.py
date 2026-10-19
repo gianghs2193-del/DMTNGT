@@ -161,11 +161,18 @@ _NUMWORD = {"một": 1, "hai": 2, "ba": 3, "bốn": 4, "năm": 5, "sáu": 6, "b�
 _N = (r"(?<![\d.,\w])(\d{1,3}|một|hai|ba|bốn|năm|sáu|bảy|tám|chín|mười)(?![.,]\d)(?!\w)"
       # khong phai so nguoi: "13 tuoi", "5 km", "nam nay", "2 nam tu"...
       r"(?!\s*(?:tuổi|km|giờ|h\b|tấn|chỗ|mét|m\b|năm|tháng|ngày|phút|%|nay|qua|ngoái|trước|xe|vụ))")
-_FILL = r"(?:\s+[^\s\d,.;:!?()]+){0,4}?\s+(?:đã\s+|bị\s+)?"
-DEATH_VERB = r"(?:tử vong|chết(?!\s*máy)|thiệt mạng|tử nạn|không qua khỏi)"
+# Dem so nguoi: so phai di kem DANH TU CHI NGUOI ("3 nguoi", "hai bo con", "4 thanh nien"...),
+# tranh dem nham "lop 12", "29 Tet", "20 con heo", "QL54"...
+PERSON = (r"(?:người|nạn nhân|em|cháu|bé|trẻ|học sinh|nam sinh|nữ sinh|sinh viên|thanh niên|thiếu niên|"
+          r"công nhân|tài xế|lái xe|phụ xe|hành khách|du khách|khách|phụ nữ|đàn ông|cụ|ông|bà|chiến sĩ|"
+          r"cán bộ|thành viên|học viên|bố con|cha con|mẹ con|vợ chồng|anh em|chị em|bà cháu|ông cháu|"
+          r"mẹ|bố|cha|anh|chị|thợ|nhân viên|ngư dân|người dân)")
+_FILL = r"\s+" + PERSON + r"(?:\s+[^\s\d,.;:!?()]+){0,4}?\s+(?:đã\s+|bị\s+|đều\s+)?"
+DEATH_VERB = r"(?:tử vong|(?<!thoát )(?<!suýt )chết(?!\s*máy)|thiệt mạng|tử nạn|không qua khỏi)"
 INJ_VERB = r"(?:bị thương|trọng thương|nhập viện|đi cấp cứu|chấn thương)"
 DEATH_NUM = re.compile(_N + _FILL + DEATH_VERB, re.I)
 INJ_NUM = re.compile(_N + _FILL + INJ_VERB, re.I)
+MAX_CHET_MOT_VU, MAX_BI_THUONG_MOT_VU = 40, 100   # vuot qua -> gan nhu chac la so lieu tong hop
 DEATH_ANY = re.compile(r"(?<!thoát )(?<!suýt )(?<!suýt bị )" + DEATH_VERB, re.I)
 INJ_ANY = re.compile(INJ_VERB, re.I)
 
@@ -318,6 +325,7 @@ def classify(head, prov, deaths, injuries):
 # 6. Ham chinh
 # =====================================================================
 def extract_features(df):
+    """Trich xuat truong + nhan cua bo loc luat (la_tngt_luat). Loc bang hoc may: xem tngt_ml.py."""
     df = df.copy()
     for c in ("title", "sapo", "content"):
         df[c] = df[c].map(nfc) if c in df else ""
@@ -359,6 +367,11 @@ def extract_features(df):
         rows.append(rec)
 
     out = pd.concat([df.reset_index(drop=True), pd.DataFrame(rows)], axis=1)
+    out["la_tngt_luat"] = out["la_tngt"]
+    out["ly_do_loai_luat"] = out["ly_do_loai"]
+    out["co_tu_khoa_tn"] = [bool(ACCIDENT_RE.search(f"{t}. {s}")) for t, s in zip(out["title"], out["sapo"])]
+    out["p_tngt"] = np.nan
+    out["phuong_phap_loc"] = "luật"
     d = out["ngay_xay_ra"]
     out["thu"] = pd.Categorical(d.dt.dayofweek.map(lambda i: WEEKDAYS[int(i)] if pd.notna(i) else None),
                                 categories=WEEKDAYS, ordered=True)
@@ -380,8 +393,75 @@ def _shingles(text):
     return {" ".join(w[i:i + 2]) for i in range(len(w) - 1)}
 
 
+# ---------------------------------------------------------------------
+# Ham bam (hashing) de kiem tra trung lap
+# ---------------------------------------------------------------------
+def normalize_for_hash(text):
+    """Chuan hoa truoc khi bam: NFC, chu thuong, bo dau cau, gop khoang trang."""
+    return " ".join(re.findall(r"\w+", nfc(text).lower()))
+
+
+def content_hash(title, content):
+    """SHA-1 cua noi dung da chuan hoa -> 2 bai giong het nhau (khac URL) co cung ma bam."""
+    import hashlib
+    return hashlib.sha1(normalize_for_hash(f"{title} {content}").encode("utf-8")).hexdigest()
+
+
+def loai_trung_hash(df):
+    """Muc 1 - trung HOAN TOAN: bang bam (dict ma_bam -> bai dau tien), O(n).
+    Tra ve (df_da_loai, so_bai_bi_loai)."""
+    df = df.copy()
+    df["ma_bam"] = [content_hash(t, c) for t, c in zip(df["title"], df["content"])]
+    seen = {}            # bang bam: ma_bam -> url dau tien
+    keep = []
+    for h, u in zip(df["ma_bam"], df["url"]):
+        keep.append(h not in seen)
+        seen.setdefault(h, u)
+    out = df[keep]
+    return out, int(len(df) - len(out))
+
+
+_P = np.uint64((1 << 31) - 1)          # so nguyen to Mersenne 2^31-1
+_rng = np.random.default_rng(12345)
+N_PERM, BANDS = 128, 64                # 128 ham bam, chia 64 bang x 2 hang
+ROWS = N_PERM // BANDS
+_A = _rng.integers(1, int(_P), N_PERM, dtype=np.uint64)
+_B = _rng.integers(0, int(_P), N_PERM, dtype=np.uint64)
+
+
+def minhash_signature(shingles):
+    """Chu ky MinHash: voi moi ham bam h_i(x) = (a_i*x + b_i) mod p, lay gia tri NHO NHAT tren
+    tap shingle. P(chu ky trung tai 1 vi tri) = do tuong dong Jaccard cua 2 tap."""
+    import zlib
+    if not shingles:
+        return np.full(N_PERM, _P, dtype=np.uint64)
+    x = np.array([zlib.crc32(s.encode("utf-8")) & 0x7FFFFFFF for s in shingles], dtype=np.uint64)
+    return ((_A[:, None] * x[None, :] + _B[:, None]) % _P).min(axis=1)
+
+
+def lsh_candidates(signatures):
+    """LSH (Locality-Sensitive Hashing): chia chu ky thanh BANDS bang, bam moi bang vao thung;
+    2 bai roi chung thung o it nhat 1 bang -> cap ung vien. Nguong ~ (1/BANDS)^(1/ROWS)."""
+    from collections import defaultdict
+    pairs = set()
+    for b in range(BANDS):
+        buckets = defaultdict(list)                  # bang bam: khoa bang -> danh sach bai
+        for i, sig in enumerate(signatures):
+            buckets[sig[b * ROWS:(b + 1) * ROWS].tobytes()].append(i)
+        for members in buckets.values():
+            if 1 < len(members) <= 200:
+                for x in range(len(members)):
+                    for y in range(x + 1, len(members)):
+                        pairs.add((members[x], members[y]))
+    return pairs
+
+
 def gop_vu(acc, sim_threshold=0.22):
-    """acc: cac bai la_tngt=1. Tra ve (bang_vu, acc_co_vu_id)."""
+    """acc: cac bai la_tngt=1. Gop cac bai cung mot vu:
+      1) MinHash + LSH sinh cap ung vien (thay vi so sanh moi cap),
+      2) kiem tra cap ung vien: cach nhau <=1 ngay, cung tinh, Jaccard >= nguong,
+      3) Union-Find gom thanh vu.
+    Tra ve (bang_vu, acc_co_vu_id); thong ke dat trong bang_vu.attrs["kiem_tra_trung"]."""
     acc = acc.reset_index(drop=True).copy()
     n = len(acc)
     parent = list(range(n))
@@ -393,23 +473,58 @@ def gop_vu(acc, sim_threshold=0.22):
         return i
 
     sh = [_shingles(f"{t} {s}") for t, s in zip(acc["title"], acc["sapo"])]
+    sigs = [minhash_signature(x) for x in sh]
+    cand_lsh = lsh_candidates(sigs)
     dates = acc["ngay_xay_ra"].values.astype("datetime64[D]")
-    order = np.argsort(dates)
-    for a_pos in range(n):
-        i = order[a_pos]
-        for b_pos in range(a_pos + 1, n):
-            j = order[b_pos]
-            if np.isnat(dates[i]) or np.isnat(dates[j]) or (dates[j] - dates[i]).astype(int) > 1:
-                break
-            pi, pj = acc.at[i, "tinh_moi"], acc.at[j, "tinh_moi"]
-            if pi and pj and pi != pj:
-                continue
-            di, dj = acc.at[i, "so_chet"], acc.at[j, "so_chet"]
-            union = len(sh[i] | sh[j]) or 1
-            sim = len(sh[i] & sh[j]) / union
-            same_deaths = pd.notna(di) and pd.notna(dj) and di == dj and di > 0
-            if sim >= sim_threshold or (same_deaths and pi and pi == pj and sim >= 0.1):
-                parent[find(i)] = find(j)
+    # Blocking bang bam: khoa (tinh, ngay) -> bai; ghep voi ngay ke tiep de bat bai cung tinh,
+    # lech 1 ngay, cung so nguoi chet nhung viet khac nhau (Jaccard thap, LSH co the bo sot)
+    from collections import defaultdict
+    blocks = defaultdict(list)
+    for i, (pv, d) in enumerate(zip(acc["tinh_moi"], dates)):
+        if pv and not np.isnat(d):
+            blocks[(pv, d)].append(i)
+    cand_block = set()
+    for (pv, d), mem in blocks.items():
+        nxt = blocks.get((pv, d + np.timedelta64(1, "D")), [])
+        group = mem + nxt
+        for x in range(len(mem)):
+            for y in range(x + 1, len(group)):
+                cand_block.add(tuple(sorted((mem[x], group[y]))))
+    # Khoi bam thu 2: khoa (tinh, so nguoi chet) voi vu tu 3 nguoi chet tro len -> gom cac bai
+    # dua tin tiep (nhan chung, nguyen nhan...) dang cach vai ngay, tieu de khac han nhau
+    sev = defaultdict(list)
+    for i, (pv, d, k) in enumerate(zip(acc["tinh_moi"], dates, acc["so_chet"])):
+        if pv and not np.isnat(d) and pd.notna(k) and k >= 3:
+            sev[(pv, int(k))].append(i)
+    cand_sev = set()
+    for mem in sev.values():
+        for x in range(len(mem)):
+            for y in range(x + 1, len(mem)):
+                if abs((dates[mem[x]] - dates[mem[y]]).astype(int)) <= 7:
+                    cand_sev.add(tuple(sorted((mem[x], mem[y]))))
+    cands = cand_lsh | cand_block | cand_sev
+    merged_pairs = 0
+    for i, j in cands:
+        if (i, j) in cand_sev or (j, i) in cand_sev:     # cung tinh, cung so chet >= 3, <= 7 ngay
+            parent[find(i)] = find(j)
+            merged_pairs += 1
+            continue
+        if np.isnat(dates[i]) or np.isnat(dates[j]) or abs((dates[j] - dates[i]).astype(int)) > 1:
+            continue
+        pi, pj = acc.at[i, "tinh_moi"], acc.at[j, "tinh_moi"]
+        if pi and pj and pi != pj:
+            continue
+        sim = len(sh[i] & sh[j]) / (len(sh[i] | sh[j]) or 1)
+        di, dj = acc.at[i, "so_chet"], acc.at[j, "so_chet"]
+        same_deaths = pd.notna(di) and pd.notna(dj) and di == dj and di > 0
+        if sim >= sim_threshold or (same_deaths and pi and pi == pj and sim >= 0.1):
+            parent[find(i)] = find(j)
+            merged_pairs += 1
+    stats = {"so_bai": n, "cap_ung_vien_lsh": len(cand_lsh), "cap_ung_vien_khoi_tinh_ngay": len(cand_block),
+             "cap_ung_vien_khoi_tinh_so_chet": len(cand_sev),
+             "cap_ung_vien_tong": len(cands), "cap_so_sanh_neu_vet_can": n * (n - 1) // 2,
+             "cap_duoc_gop": merged_pairs, "so_ham_bam": N_PERM, "so_bang": BANDS, "so_hang_moi_bang": ROWS,
+             "nguong_lsh_xap_xi": round((1 / BANDS) ** (1 / ROWS), 3)}
 
     acc["vu_id"] = [find(i) for i in range(n)]
     acc["_len"] = acc["content"].str.len()
@@ -429,7 +544,10 @@ def gop_vu(acc, sim_threshold=0.22):
     vu["co_tu_vong"] = (vu["so_chet"].fillna(0) > 0).astype(int)
     vu["muc_do"] = np.select([vu["so_chet"].fillna(0) > 0, vu["so_bi_thuong"].fillna(0) > 0],
                              ["Có người chết", "Chỉ bị thương"], default="Không rõ/không thương vong")
-    return vu.reset_index(), acc.drop(columns=["_len"])
+    vu = vu.reset_index()
+    stats["so_vu"] = len(vu)
+    vu.attrs["kiem_tra_trung"] = stats
+    return vu, acc.drop(columns=["_len"])
 
 
 # =====================================================================
@@ -443,7 +561,7 @@ def build_items(vu):
     for b in TIME_BUCKETS:
         items[f"giờ: {b}"] = vu["khung_gio"].astype(object) == b
     for r in vu["loai_duong"].dropna().unique():
-        if r != "khác/không rõ":
+        if r not in ("khác/không rõ", "Không rõ"):
             items[f"đường: {r}"] = vu["loai_duong"] == r
     items["cuối tuần"] = vu["thu"].isin(["Thứ 7", "Chủ nhật"])
     items["dịp lễ/Tết"] = vu["dip_le_tet"].astype(bool)

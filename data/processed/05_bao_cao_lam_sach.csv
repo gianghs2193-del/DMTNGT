@@ -1,0 +1,13 @@
+﻿Bước,Loại vấn đề,Trước,Sau,Thay đổi,Cách xử lý
+Trùng URL,Dữ liệu trùng,8782,8782,0,Giữ 1 bản cho mỗi URL đã chuẩn hóa
+Thiếu tiêu đề hoặc nội dung,Giá trị thiếu,8782,8779,-3,Loại bỏ (không có văn bản để phân tích)
+Trang không phải bài báo,Dữ liệu nhiễu,8779,8777,-2,"Loại trang chính sách, giới thiệu, trắc nghiệm…"
+Dòng rác trong nội dung,Dữ liệu nhiễu,8777,8777,0,"Xóa dòng 'Xem thêm', 'Tin liên quan', chú thích, URL (7,598 ký tự)"
+Nội dung < 300 ký tự,Dữ liệu nhiễu,8777,8758,-19,Loại (bài video/ảnh hoặc bóc tách lỗi)
+Thiếu sapo,Giá trị thiếu,8758,8758,0,Điền bằng câu đầu của nội dung (0 bài)
+Thiếu/sai ngày đăng,Giá trị thiếu,8758,8758,0,"Khôi phục từ URL (0 bài), còn lại loại bỏ"
+"Ngày đăng ngoài [2023-01-01, hôm nay]",Dữ liệu nhiễu,8758,8758,0,Loại (ngày sai hoặc ngoài phạm vi nghiên cứu)
+Trùng nội dung (SHA-1),Dữ liệu trùng,8758,8757,-1,"Băm SHA-1 nội dung đã chuẩn hóa, giữ 1 bản mỗi mã băm"
+Bài không phải tin TNGT,Dữ liệu nhiễu,8757,1778,-6979,Lọc tự động bằng học bán giám sát (Self-training)
+Số chết > 40 hoặc bị thương > 100,Ngoại lai,1778,1774,-4,"Coi là bài thống kê tổng hợp, loại khỏi tập vụ"
+Nhiều bài cùng một vụ,Dữ liệu trùng,1774,1450,-324,"MinHash-LSH + khối băm (tỉnh, ngày), (tỉnh, số chết) + Union-Find"
